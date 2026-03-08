@@ -13,7 +13,9 @@ pipeline {
         }
         stage('SAST Scan') {
             steps {
-                echo 'SonarQube SAST Scan - configured separately'
+                withSonarQubeEnv('SonarQube') {
+                    sh '/opt/sonar-scanner/bin/sonar-scanner -Dsonar.projectKey=TP-Jenkins -Dsonar.sources=. -Dsonar.host.url=http://sonarqube:9000'
+                }
             }
         }
         stage('SCA Scan') {
