@@ -3,7 +3,7 @@ pipeline {
     stages {
         stage('Install Dependencies') {
             steps {
-                sh 'python3 -m pip install flask requests --break-system-packages'
+                sh 'python3 -m pip install flask==0.12.2 requests==2.18.0 --break-system-packages'
             }
         }
         stage('Run Tests') {
@@ -20,16 +20,16 @@ pipeline {
         }
         stage('SCA Scan') {
             steps {
-                echo 'OWASP Dependency-Check SCA Scan completed'
+                sh '/opt/dependency-check/bin/dependency-check.sh --project "TP-Jenkins" --scan . --format HTML --failOnCVSS 7 --noupdate'
             }
         }
     }
     post {
+        failure {
+            echo 'Build failed due to errors or vulnerabilities!'
+        }
         success {
             echo 'Build successful!'
-        }
-        failure {
-            echo 'Build failed due to errors or vulnerabilities'
         }
     }
 }
